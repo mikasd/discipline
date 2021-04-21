@@ -1,72 +1,77 @@
-use std::collections::HashMap;
+// use todo::Todo;
+use chrono::{DateTime, Local};
+use std::io;
 
 fn main() {
-    let action = std::env::args().nth(1).expect("Please specify an action");
-    let item = std::env::args()
-        .nth(2)
-        .expect("Please specify an item to act on");
+    // let action = std::env::args().nth(1).expect("Please specify an action");
+    // let item = std::env::args()
+    //     .nth(2)
+    //     .expect("Please specify an item to act on");
 
-    println!("{:?}, {:?}", action, item);
+    // println!("{:?}, {:?}", action, item);
 
-    let mut todo = Todo::new().expect("db init failed");
+    // let mut todo = Todo::new().expect("db init failed");
 
-    if action == "add" {
-        todo.insert(item);
-        match todo.save() {
-            Ok(_) => println!("saved succesfully"),
-            Err(why) => println!("ERR @ {}", why),
-        }
-    } else if action == "done" {
-        match todo.complete(&item) {
-            None => println!("'{}' item not found", item),
-            Some(_) => match todo.save() {
-                Ok(_) => println!("task updated"),
-                Err(why) => println!("error: {}", why),
-            },
-        }
-    }
-}
+    // if action == "add" {
+    //     todo.insert(item);
+    //     match todo.save() {
+    //         Ok(_) => println!("saved succesfully"),
+    //         Err(why) => println!("ERR @ {}", why),
+    //     }
+    // } else if action == "done" {
+    //     match todo.complete(&item) {
+    //         None => println!("'{}' item not found", item),
+    //         Some(_) => match todo.save() {
+    //             Ok(_) => println!("task updated"),
+    //             Err(why) => println!("error: {}", why),
+    //         },
+    //     }
+    // }
 
-struct Todo {
-    map: HashMap<String, bool>,
-}
+    let now: DateTime<Local> = Local::now();
 
-impl Todo {
-    fn new() -> Result<Todo, std::io::Error> {
-        let f = std::fs::OpenOptions::new()
-            .write(true)
-            .create(true)
-            .read(true)
-            .open("db.json")?;
-        match serde_json::from_reader(f) {
-            Ok(map) => Ok(Todo { map }),
-            Err(e) if e.is_eof() => Ok(Todo {
-                map: HashMap::new(),
-            }),
-            Err(e) => panic!("err occured: {}", e),
+    // testing datetime lib
+    println!("datetime is: {}", now);
+
+    let mut three_wins: Vec<&str> = vec![];
+
+    println!("Document three wins you had yesterday.");
+    println!("Win 1 => ");
+    let mut input1 = String::new();
+    match io::stdin().read_line(&mut input1) {
+        Err(error) => println!("error: {}", error),
+        Ok(n) => {
+            println!("{} bytes read", n);
         }
     }
 
-    fn insert(&mut self, key: String) {
-        //insert new item into map
-        self.map.insert(key, true);
-    }
+    three_wins.push(&input1);
+    println!("Win 2 => ");
 
-    //owns Todo struct implmentation, this prevents posthumous inserts after save
-    fn save(self) -> Result<(), Box<dyn std::error::Error>> {
-        let f = std::fs::OpenOptions::new()
-            .write(true)
-            .create(true)
-            .open("db.json")?;
-
-        serde_json::to_writer_pretty(f,&self.map)?;
-        Ok(())
-    }
-
-    fn complete(&mut self, key: &String) -> Option<()> {
-        match self.map.get_mut(key) {
-            Some(v) => Some(*v = false),
-            None => None,
+    let mut input2 = String::new();
+    match io::stdin().read_line(&mut input2) {
+        Err(error) => println!("error: {}", error),
+        Ok(n) => {
+            // placeholder for logger logic 
+            println!("{} bytes read", n);
         }
+    }
+
+    three_wins.push(&input2);
+    println!("Win 3 => ");
+
+    let mut input3 = String::new();
+    match io::stdin().read_line(&mut input3) {
+        Err(error) => println!("error: {}", error),
+        Ok(n) => {
+            // placeholder for logger logic             
+            println!("{} bytes read", n);
+        }
+    }
+
+    three_wins.push(&input3);
+
+    for win in three_wins.iter() {
+        println!("{}", win);
     }
 }
